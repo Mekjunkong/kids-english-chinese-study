@@ -176,7 +176,7 @@
 .choice-btn.is-correct {
   background: linear-gradient(145deg, #d0fff0, #b0ffe0);
   border-color: var(--color-success);
-  animation: answerPulse 0.4s ease both;
+  animation: answerPulse 0.4s ease both, correctGlow 1.2s ease-in-out infinite;
 }
 
 .choice-btn.is-correct::after {
@@ -197,7 +197,16 @@
 .choice-btn.is-wrong {
   background: linear-gradient(145deg, #ffe0e8, #ffc0cc);
   border-color: var(--color-error);
-  animation: answerShake 0.38s ease;
+  animation: answerShake 0.55s ease;
+}
+
+.choice-btn.is-correct,
+.choice-btn.is-wrong {
+  opacity: 1 !important;
+}
+
+.choice-btn:disabled:not(.is-wrong):not(.is-correct) {
+  opacity: 0.45;
 }
 
 @media (max-width: 380px) {
@@ -228,9 +237,9 @@
 }
 
 .answer-toast.is-wrong {
-  background: white;
-  border: 3px solid var(--color-error);
-  color: var(--color-text);
+  background: linear-gradient(145deg, #ff4d6d, #e0001b);
+  border: none;
+  color: white;
 }
 
 @keyframes answerPulse {
@@ -242,6 +251,16 @@
   }
   100% {
     transform: scale(1);
+  }
+}
+
+@keyframes correctGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(6, 214, 160, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(6, 214, 160, 0);
   }
 }
 
