@@ -231,6 +231,13 @@
   animation: toastUp 0.28s ease both;
 }
 
+.quiz-hint {
+  margin-top: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
 .answer-toast.is-correct {
   background: linear-gradient(145deg, #ffe58a, #ffd93d);
   color: var(--color-text);

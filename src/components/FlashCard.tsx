@@ -238,7 +238,9 @@ export default function FlashCard({ mode, category, onStartQuiz, onCompleteDeck,
             <span className="fc-back-emoji">{word.emoji}</span>
             {isCN && cnWord && <StrokeCard character={cnWord.chinese} autoAnimate={flipped} />}
             <p className="fc-meaning">{word.thai}</p>
-            <p className="fc-phonetic">{phonetics}</p>
+            <p className="fc-phonetic">
+              {cnWord ? phonetics : 'กด 🔊 เพื่อฟังการออกเสียง'}
+            </p>
             {cnWord?.english && <p className="fc-meaning-sub">{cnWord.english}</p>}
           </div>
         </div>
@@ -246,7 +248,7 @@ export default function FlashCard({ mode, category, onStartQuiz, onCompleteDeck,
 
       <div className="fc-progress-wrap" aria-label={`Card ${index + 1} of ${words.length}`}>
         <p className="fc-progress-label">
-          Card {index + 1} of {words.length} · ใบที่ {index + 1} จาก {words.length}
+          ใบที่ {index + 1} จาก {words.length}
         </p>
         <div className="fc-progress-track">
           <div className="fc-progress-fill" style={{ width: `${progress}%` }} />

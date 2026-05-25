@@ -315,6 +315,14 @@
   text-align: center;
 }
 
+.cat-word-count {
+  position: relative;
+  margin-top: 2px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  opacity: 0.65;
+}
+
 .mode-actions {
   position: relative;
   display: flex;

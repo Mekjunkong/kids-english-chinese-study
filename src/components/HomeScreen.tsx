@@ -41,7 +41,7 @@ export default function HomeScreen({ mode, categories, onStartFlashcard, onStart
       </div>
 
       <div className="app-header">
-        <span className="mascot">{isCN ? '🐼' : '⭐'}</span>
+        <span className="mascot">{isCN ? '🐼' : '🦉'}</span>
         <h1 className="app-title">Little Learners</h1>
         <p className="app-subtitle">
           {isCN ? 'เรียนภาษาจีน HSK 1! 🇨🇳' : 'เรียนภาษาอังกฤษกันเถอะ! 🇬🇧'}
@@ -71,6 +71,7 @@ export default function HomeScreen({ mode, categories, onStartFlashcard, onStart
               <strong className="cat-primary">{cnCategory ? cnCategory.chinese : category.english}</strong>
               {cnCategory && <span className="cat-pinyin">{cnCategory.pinyin}</span>}
               <span className="cat-thai">{category.thai}</span>
+              <span className="cat-word-count">{category.words.length} คำ</span>
               <span className="mode-actions">
                 <button className="mode-action" onClick={() => onStartFlashcard(category)} type="button">
                   บัตรคำ / Cards

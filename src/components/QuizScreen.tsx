@@ -131,6 +131,10 @@ export default function QuizScreen({
         })}
       </div>
 
+      {!feedback && (
+        <p className="quiz-hint">💡 เลือกคำตอบที่ถูกต้อง! / Pick the right answer!</p>
+      )}
+
       {feedback === 'correct' && (
         <div className="answer-toast is-correct" role="status">
           🎉 เก่งมาก! / Great job!
