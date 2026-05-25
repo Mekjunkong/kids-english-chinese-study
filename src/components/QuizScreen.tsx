@@ -1,5 +1,5 @@
 import type React from 'react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import type { Category, ChineseCategory, ChineseWord, CnQuestion, EnQuestion, Feedback, Mode, Word } from '../data/types'
 import { sayCN, sayEN } from '../utils/speech'
 
@@ -9,6 +9,7 @@ interface Props {
   qi: number
   total: number
   stars: number
+  starSparkleKey: number
   selected: string | null
   feedback: Feedback
   category: Category | ChineseCategory
@@ -26,6 +27,7 @@ export default function QuizScreen({
   qi,
   total,
   stars,
+  starSparkleKey,
   selected,
   feedback,
   category,
@@ -38,9 +40,16 @@ export default function QuizScreen({
   const enWord = cnWord ? null : (word as Word)
   const progress = ((qi + (feedback === 'correct' ? 1 : 0)) / total) * 100
   const correctAnswer = cnWord ? cnWord.thai : enWord?.english
+  const [isSpeaking, setIsSpeaking] = useState(false)
+
+  function showSpeakingPulse() {
+    setIsSpeaking(true)
+    window.setTimeout(() => setIsSpeaking(false), 900)
+  }
 
   useEffect(() => {
     const delay = window.setTimeout(() => {
+      showSpeakingPulse()
       if (cnWord) sayCN(cnWord.chinese)
       if (enWord) sayEN(enWord.english)
     }, 480)
@@ -48,6 +57,7 @@ export default function QuizScreen({
   }, [cnWord, enWord, qi])
 
   function handleSpeak() {
+    showSpeakingPulse()
     if (cnWord) sayCN(cnWord.chinese)
     if (enWord) sayEN(enWord.english)
   }
@@ -67,13 +77,13 @@ export default function QuizScreen({
         >
           <div className="quiz-progress-fill" style={{ width: `${progress}%` }} />
         </div>
-        <span className="quiz-stars" aria-label={`${stars} ดาว`}>
+        <span key={starSparkleKey} className={`quiz-stars${starSparkleKey > 0 ? ' is-sparkling' : ''}`} aria-label={`${stars} ดาว`}>
           ⭐ {stars}
         </span>
       </div>
 
       <div className={`q-card${feedback ? ` is-${feedback}` : ''}`}>
-        <button className="speak-btn" onClick={handleSpeak} type="button" aria-label="ฟังเสียง">
+        <button className={`speak-btn${isSpeaking ? ' is-speaking' : ''}`} onClick={handleSpeak} type="button" aria-label="ฟังเสียง">
           🔊
         </button>
 
@@ -92,16 +102,6 @@ export default function QuizScreen({
           <p className="q-label">{word.thai}</p>
         )}
 
-        {feedback === 'correct' && (
-          <div className="feedback-chip is-correct" role="status">
-            ✅ เก่งมาก! (Great job!)
-          </div>
-        )}
-        {feedback === 'wrong' && (
-          <div className="feedback-chip is-wrong" role="status">
-            ❌ คำตอบที่ถูกคือ {correctAnswer}
-          </div>
-        )}
       </div>
 
       <div className="choices" role="group" aria-label="เลือกคำตอบ">
@@ -119,7 +119,7 @@ export default function QuizScreen({
           return (
             <button
               key={option}
-              className={`choice-btn${state ? ` is-${state}` : ''}`}
+              className={`choice-btn${state ? ` is-${state}` : ''}${isSelected ? ' is-selected' : ''}`}
               onClick={() => onPick(option)}
               type="button"
               disabled={Boolean(feedback)}
@@ -131,14 +131,16 @@ export default function QuizScreen({
         })}
       </div>
 
-      <div className="quiz-dots" aria-label={`คำที่ ${qi + 1} จาก ${total}`} aria-hidden="true">
-        {Array.from({ length: total }, (_, dotIndex) => (
-          <span
-            key={dotIndex}
-            className={`quiz-dot${dotIndex < qi ? ' is-done' : dotIndex === qi ? ' is-cur' : ''}`}
-          />
-        ))}
-      </div>
+      {feedback === 'correct' && (
+        <div className="answer-toast is-correct" role="status">
+          🎉 เก่งมาก! / Great job!
+        </div>
+      )}
+      {feedback === 'wrong' && (
+        <div className="answer-toast is-wrong" role="status">
+          อ๊ะ! คำตอบที่ถูกต้องคือ {correctAnswer} / Oops! Answer: {correctAnswer}
+        </div>
+      )}
     </div>
   )
 }

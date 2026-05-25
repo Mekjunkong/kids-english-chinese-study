@@ -39,13 +39,40 @@ export function playDing() {
 
   oscillator.type = 'sine'
   oscillator.frequency.setValueAtTime(880, ctx.currentTime)
-  oscillator.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.12)
+  oscillator.frequency.exponentialRampToValueAtTime(1100, ctx.currentTime + 0.3)
   gain.gain.setValueAtTime(0.001, ctx.currentTime)
   gain.gain.exponentialRampToValueAtTime(0.22, ctx.currentTime + 0.02)
-  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25)
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3)
 
   oscillator.connect(gain)
   gain.connect(ctx.destination)
   oscillator.start()
-  oscillator.stop(ctx.currentTime + 0.28)
+  oscillator.stop(ctx.currentTime + 0.3)
+  oscillator.onended = () => {
+    void ctx.close()
+  }
+}
+
+export function playBuzz() {
+  const audioWindow = window as typeof window & { webkitAudioContext?: typeof AudioContext }
+  const AudioContextClass = audioWindow.AudioContext || audioWindow.webkitAudioContext
+  if (!AudioContextClass) return
+
+  const ctx = new AudioContextClass()
+  const oscillator = ctx.createOscillator()
+  const gain = ctx.createGain()
+
+  oscillator.type = 'sine'
+  oscillator.frequency.setValueAtTime(200, ctx.currentTime)
+  gain.gain.setValueAtTime(0.001, ctx.currentTime)
+  gain.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 0.02)
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2)
+
+  oscillator.connect(gain)
+  gain.connect(ctx.destination)
+  oscillator.start()
+  oscillator.stop(ctx.currentTime + 0.2)
+  oscillator.onended = () => {
+    void ctx.close()
+  }
 }

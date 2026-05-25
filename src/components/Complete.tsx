@@ -1,5 +1,5 @@
 import type React from 'react'
-import type { Category, ChineseCategory, CompleteKind, Mode } from '../data/types'
+import type { Category, ChineseCategory, CompleteKind } from '../data/types'
 
 const BADGE_DEFS: Record<string, { emoji: string; name: string }> = {
   'first-star': { emoji: '⭐', name: 'ดาวดวงแรก!' },
@@ -12,7 +12,6 @@ const BADGE_DEFS: Record<string, { emoji: string; name: string }> = {
 }
 
 interface Props {
-  mode: Mode
   kind: CompleteKind
   category: Category | ChineseCategory
   stars: number
@@ -23,39 +22,34 @@ interface Props {
   onHome: () => void
 }
 
-export default function Complete({ mode, kind, category, stars, total, starsEarned, newBadges, onReplay, onHome }: Props) {
-  const perfect = stars === total
-  const percentage = total > 0 ? Math.round((stars / total) * 100) : 0
+export default function Complete({ kind, category, stars, total, starsEarned, newBadges, onReplay, onHome }: Props) {
   const isQuiz = kind === 'quiz'
 
   return (
     <div className="complete-screen">
       <div className="confetti" aria-hidden="true">
-        {Array.from({ length: 18 }, (_, index) => (
+        {Array.from({ length: 20 }, (_, index) => (
           <span key={index} style={{ '--i': index } as React.CSSProperties} />
         ))}
       </div>
 
       <span className="complete-trophy" role="img" aria-label="รางวัล">
-        {isQuiz ? (perfect ? '🏆' : percentage >= 70 ? '🌟' : '🐼') : category.emoji}
+        {category.emoji}
       </span>
 
       <h2 className="complete-title">หมวดนี้เสร็จแล้ว! 🎉</h2>
       <p className="complete-subtitle">Category Complete!</p>
 
       {isQuiz ? (
-        <p className="complete-score">
-          {stars} / {total} ถูกต้อง ({percentage}%) · {mode === 'chinese' ? 'Chinese HSK Practice' : 'English Practice'}
-        </p>
+        <p className="complete-score">{stars} / {total} ถูก!</p>
       ) : (
         <p className="complete-score">จบบัตรคำครบชุดแล้ว / Flashcard deck finished</p>
       )}
 
       <p className="complete-stars-earned">⭐ +{starsEarned} ดาว / stars earned</p>
 
-      {isQuiz && <div className="star-strip" aria-label={`${stars} ดาวจาก ${total}`}>
-        {'⭐'.repeat(stars)}
-        {'☆'.repeat(Math.max(0, total - stars))}
+      {isQuiz && <div className="star-strip" aria-label={`${starsEarned} ดาวที่ได้รับ`}>
+        {'⭐'.repeat(starsEarned)}
       </div>}
 
       {newBadges.length > 0 && (

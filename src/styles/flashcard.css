@@ -149,14 +149,26 @@
   top: var(--space-md);
   right: var(--space-md);
   z-index: 2;
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: var(--shadow-sm);
-  font-size: 24px;
+  background: #6c63ff;
+  color: white;
+  box-shadow: 0 4px 14px rgba(108, 99, 255, 0.34);
+  font-size: 22px;
+}
+
+.card-speak-btn.is-speaking::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 3px solid rgba(108, 99, 255, 0.45);
+  animation: speakerRing 0.75s ease-out infinite;
 }
 
 .stroke-actions {
@@ -194,6 +206,11 @@
   color: var(--color-text);
 }
 
+.fc-btn-prev:disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
 .fc-btn-next {
   background: var(--color-primary);
   color: white;
@@ -221,35 +238,59 @@
   box-shadow: var(--shadow-md);
 }
 
-.fc-dots {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-}
-
-.fc-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #d6d2e5;
-  transition: all var(--transition-normal);
-}
-
-.fc-dot.is-active {
-  width: 20px;
-  border-radius: 4px;
-  background: var(--color-primary);
-}
-
-.fc-dot.is-done {
-  background: var(--color-success);
-}
-
 .fc-progress-wrap {
   width: 100%;
   display: grid;
   gap: var(--space-xs);
+}
+
+.deck-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: var(--space-lg);
+  background: rgba(26, 16, 64, 0.32);
+  backdrop-filter: blur(6px);
+}
+
+.deck-modal {
+  width: min(100%, 420px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-xl);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(160deg, #ffffff 0%, #f4f0ff 100%);
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  animation: completeEnter 0.35s ease both;
+}
+
+.deck-modal h2 {
+  color: var(--color-primary);
+  font-size: var(--font-size-xl);
+  font-weight: 900;
+}
+
+.deck-modal-emoji {
+  font-size: 80px;
+  filter: drop-shadow(0 6px 16px rgba(108, 59, 245, 0.26));
+  animation: bounceIn 0.48s ease both;
+}
+
+.deck-modal-stars {
+  color: var(--color-text);
+  font-size: var(--font-size-lg);
+  font-weight: 900;
+}
+
+.deck-modal-actions {
+  width: 100%;
+  display: grid;
+  gap: var(--space-md);
 }
 
 .fc-progress-label {

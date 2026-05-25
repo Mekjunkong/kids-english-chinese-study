@@ -109,6 +109,9 @@ function getEnglishPhonetic(text: string) {
 export default function FlashCard({ mode, category, onStartQuiz, onCompleteDeck, onBack }: Props) {
   const [index, setIndex] = useState(0)
   const [flipped, setFlipped] = useState(false)
+  const [speakingSide, setSpeakingSide] = useState<'front' | 'back' | null>(null)
+  const [completeOpen, setCompleteOpen] = useState(false)
+  const [deckAwarded, setDeckAwarded] = useState(false)
   const isCN = mode === 'chinese'
   const words = category.words
   const word = words[index]
@@ -117,18 +120,26 @@ export default function FlashCard({ mode, category, onStartQuiz, onCompleteDeck,
 
   useEffect(() => {
     const delay = window.setTimeout(() => {
+      showSpeakingPulse('front')
       if (cnWord) sayCN(cnWord.chinese)
       if (enWord) sayEN(enWord.english)
     }, 500)
     return () => window.clearTimeout(delay)
   }, [cnWord, enWord, index])
 
+  function showSpeakingPulse(side: 'front' | 'back') {
+    setSpeakingSide(side)
+    window.setTimeout(() => setSpeakingSide(null), 900)
+  }
+
   function speakCurrent() {
+    showSpeakingPulse('front')
     if (cnWord) sayCN(cnWord.chinese)
     if (enWord) sayEN(enWord.english)
   }
 
   function speakThai() {
+    showSpeakingPulse('back')
     sayTH(word.thai)
   }
 
@@ -141,7 +152,14 @@ export default function FlashCard({ mode, category, onStartQuiz, onCompleteDeck,
     if (index < words.length - 1) {
       setFlipped(false)
       setIndex((value) => value + 1)
+      return
     }
+
+    if (!deckAwarded) {
+      onCompleteDeck()
+      setDeckAwarded(true)
+    }
+    setCompleteOpen(true)
   }
 
   const progress = ((index + 1) / words.length) * 100
@@ -181,7 +199,7 @@ export default function FlashCard({ mode, category, onStartQuiz, onCompleteDeck,
         <div className="flip-card-inner">
           <div className="flip-card-front">
             <button
-              className="card-speak-btn"
+              className={`card-speak-btn${speakingSide === 'front' ? ' is-speaking' : ''}`}
               onClick={(event) => {
                 event.stopPropagation()
                 speakCurrent()
@@ -207,7 +225,7 @@ export default function FlashCard({ mode, category, onStartQuiz, onCompleteDeck,
 
           <div className="flip-card-back">
             <button
-              className="card-speak-btn"
+              className={`card-speak-btn${speakingSide === 'back' ? ' is-speaking' : ''}`}
               onClick={(event) => {
                 event.stopPropagation()
                 speakThai()
@@ -226,15 +244,6 @@ export default function FlashCard({ mode, category, onStartQuiz, onCompleteDeck,
         </div>
       </div>
 
-      <div className="fc-dots">
-        {words.map((item, dotIndex) => (
-          <div
-            key={`${item.emoji}-${dotIndex}`}
-            className={`fc-dot${dotIndex === index ? ' is-active' : dotIndex < index ? ' is-done' : ''}`}
-          />
-        ))}
-      </div>
-
       <div className="fc-progress-wrap" aria-label={`Card ${index + 1} of ${words.length}`}>
         <p className="fc-progress-label">
           Card {index + 1} of {words.length} · ใบที่ {index + 1} จาก {words.length}
@@ -244,28 +253,32 @@ export default function FlashCard({ mode, category, onStartQuiz, onCompleteDeck,
         </div>
       </div>
 
-      {index < words.length - 1 ? (
-        <div className="fc-nav">
-          <button className="fc-btn fc-btn-prev" onClick={goPrev} disabled={index === 0} type="button">
-            ← ก่อนหน้า
-          </button>
-          <button className="fc-btn fc-btn-next" onClick={goNext} type="button">
-            ถัดไป →
-          </button>
-        </div>
-      ) : (
-        <div className="fc-nav" style={{ flexDirection: 'column' }}>
-          {index > 0 && (
-            <button className="fc-btn fc-btn-prev" onClick={goPrev} type="button">
-              ← ก่อนหน้า
-            </button>
-          )}
-          <button className="fc-btn-quiz" onClick={onStartQuiz} type="button">
-            🎮 เริ่มทำแบบทดสอบ! / Start Quiz
-          </button>
-          <button className="fc-btn-complete" onClick={onCompleteDeck} type="button">
-            🎉 จบบัตรคำ / Finish Deck +2 ⭐
-          </button>
+      <div className="fc-nav">
+        <button className="fc-btn fc-btn-prev" onClick={goPrev} disabled={index === 0} type="button">
+          ← ก่อนหน้า
+        </button>
+        <button className="fc-btn fc-btn-next" onClick={goNext} type="button">
+          ถัดไป →
+        </button>
+      </div>
+
+      {completeOpen && (
+        <div className="deck-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="deck-complete-title">
+          <div className="deck-modal">
+            <h2 id="deck-complete-title">✨ เสร็จแล้ว! / All done!</h2>
+            <span className="deck-modal-emoji" aria-hidden="true">
+              {category.emoji}
+            </span>
+            <p className="deck-modal-stars">+2 ⭐ Stars earned!</p>
+            <div className="deck-modal-actions">
+              <button className="fc-btn-quiz" onClick={onStartQuiz} type="button">
+                Quiz ต่อไป / Take Quiz
+              </button>
+              <button className="fc-btn fc-btn-prev" onClick={onBack} type="button">
+                กลับ / Back
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

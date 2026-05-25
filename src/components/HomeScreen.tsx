@@ -1,4 +1,5 @@
 import type React from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Category, ChineseCategory, Mode } from '../data/types'
 import { useProgress } from '../hooks/useProgress'
 
@@ -17,6 +18,18 @@ function isChineseCategory(category: Category | ChineseCategory): category is Ch
 export default function HomeScreen({ mode, categories, onStartFlashcard, onStartQuiz, onLangPick }: Props) {
   const { progress } = useProgress()
   const isCN = mode === 'chinese'
+  const previousStars = useRef(progress.totalStars)
+  const [sparkling, setSparkling] = useState(false)
+
+  useEffect(() => {
+    if (progress.totalStars > previousStars.current) {
+      setSparkling(true)
+      const timeout = window.setTimeout(() => setSparkling(false), 550)
+      previousStars.current = progress.totalStars
+      return () => window.clearTimeout(timeout)
+    }
+    previousStars.current = progress.totalStars
+  }, [progress.totalStars])
 
   return (
     <div className="home-screen">
@@ -24,7 +37,7 @@ export default function HomeScreen({ mode, categories, onStartFlashcard, onStart
         <button className="back-lang-btn" onClick={onLangPick} type="button">
           🌐 เปลี่ยนภาษา
         </button>
-        <div className="stars-display">⭐ {progress.totalStars}</div>
+        <div className={`stars-display${sparkling ? ' is-sparkling' : ''}`}>⭐ {progress.totalStars}</div>
       </div>
 
       <div className="app-header">

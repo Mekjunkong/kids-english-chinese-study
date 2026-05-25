@@ -4,7 +4,7 @@ import { EN_CATEGORIES } from './data/english'
 import type { Category, ChineseCategory, CompleteKind, Feedback, Mode, Screen } from './data/types'
 import { useProgress } from './hooks/useProgress'
 import { buildCnQuestions, buildEnQuestions } from './utils/quiz'
-import { playDing, sayCN, sayEN } from './utils/speech'
+import { playBuzz, playDing, sayCN, sayEN } from './utils/speech'
 import Complete from './components/Complete'
 import FlashCard from './components/FlashCard'
 import HomeScreen from './components/HomeScreen'
@@ -29,6 +29,7 @@ export default function App() {
   const [selected, setSelected] = useState<string | null>(null)
   const [feedback, setFeedback] = useState<Feedback>(null)
   const [stars, setStars] = useState(0)
+  const [starSparkleKey, setStarSparkleKey] = useState(0)
   const [completionKind, setCompletionKind] = useState<CompleteKind>('quiz')
   const [completionStars, setCompletionStars] = useState(0)
   const [newBadges, setNewBadges] = useState<string[]>([])
@@ -39,6 +40,7 @@ export default function App() {
     setSelected(null)
     setFeedback(null)
     setStars(0)
+    setStarSparkleKey(0)
     setCompletionStars(0)
     setNewBadges([])
   }
@@ -88,8 +90,7 @@ export default function App() {
     if (percentage === 1) return 5
     if (percentage >= 0.8) return 3
     if (percentage >= 0.6) return 2
-    if (correct > 0) return 1
-    return 0
+    return 1
   }
 
   function completeCategory(kind: CompleteKind, earnedStars: number) {
@@ -101,13 +102,13 @@ export default function App() {
   }
 
   function completeFlashcards() {
-    completeCategory('flashcard', 2)
+    const category = mode === 'english' ? enCat : cnCat
+    recordSession(2, category.id)
   }
 
   function advance(total: number, earnedStars = stars) {
     if (qi + 1 >= total) {
-      const bonus = quizBonus(earnedStars, total)
-      completeCategory('quiz', earnedStars + bonus)
+      completeCategory('quiz', quizBonus(earnedStars, total))
     } else {
       setQi((index) => index + 1)
       setSelected(null)
@@ -124,12 +125,14 @@ export default function App() {
       const nextStars = stars + 1
       setFeedback('correct')
       setStars(nextStars)
+      setStarSparkleKey((key) => key + 1)
       playDing()
       sayEN(correct)
-      window.setTimeout(() => advance(enQs.length, nextStars), 1100)
+      window.setTimeout(() => advance(enQs.length, nextStars), 800)
     } else {
       setFeedback('wrong')
-      window.setTimeout(() => advance(enQs.length, stars), 1300)
+      playBuzz()
+      window.setTimeout(() => advance(enQs.length, stars), 1500)
     }
   }
 
@@ -142,12 +145,14 @@ export default function App() {
       const nextStars = stars + 1
       setFeedback('correct')
       setStars(nextStars)
+      setStarSparkleKey((key) => key + 1)
       playDing()
       sayCN(cnQs[qi].word.chinese)
-      window.setTimeout(() => advance(cnQs.length, nextStars), 1100)
+      window.setTimeout(() => advance(cnQs.length, nextStars), 800)
     } else {
       setFeedback('wrong')
-      window.setTimeout(() => advance(cnQs.length, stars), 1300)
+      playBuzz()
+      window.setTimeout(() => advance(cnQs.length, stars), 1500)
     }
   }
 
@@ -218,6 +223,7 @@ export default function App() {
         qi={qi}
         total={enQs.length}
         stars={stars}
+        starSparkleKey={starSparkleKey}
         selected={selected}
         feedback={feedback}
         category={enCat}
@@ -233,6 +239,7 @@ export default function App() {
         qi={qi}
         total={cnQs.length}
         stars={stars}
+        starSparkleKey={starSparkleKey}
         selected={selected}
         feedback={feedback}
         category={cnCat}
@@ -243,7 +250,6 @@ export default function App() {
   } else if (screen === 'complete') {
     content = (
       <Complete
-        mode={mode}
         kind={completionKind}
         category={mode === 'english' ? enCat : cnCat}
         stars={stars}
