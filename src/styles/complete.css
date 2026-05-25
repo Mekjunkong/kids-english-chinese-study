@@ -1,0 +1,101 @@
+.complete-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xl);
+  padding: var(--space-2xl) var(--space-lg);
+  text-align: center;
+}
+
+.complete-trophy {
+  font-size: 96px;
+  filter: drop-shadow(0 6px 16px rgba(108, 59, 245, 0.3));
+  animation: bounceIn 0.7s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+.complete-title {
+  color: var(--color-primary);
+  font-size: var(--font-size-2xl);
+  font-weight: 900;
+}
+
+.complete-score {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+}
+
+.star-strip {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  font-size: 32px;
+}
+
+.badges-section {
+  width: 100%;
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.badges-title {
+  margin-bottom: var(--space-md);
+  color: var(--color-text);
+  font-size: var(--font-size-md);
+  font-weight: 900;
+}
+
+.badge-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-sm);
+}
+
+.badge-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, #ffd93d, #ff9500);
+  color: white;
+  padding: var(--space-xs) var(--space-md);
+  font-size: var(--font-size-sm);
+  font-weight: 900;
+  box-shadow: 0 2px 8px rgba(255, 149, 0, 0.3);
+  animation: bounceIn 0.5s ease both;
+}
+
+.complete-btns {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  width: 100%;
+}
+
+.btn-replay,
+.btn-home {
+  width: 100%;
+  min-height: 56px;
+  border-radius: var(--radius-full);
+  padding: var(--space-md) var(--space-xl);
+  font-size: var(--font-size-lg);
+  font-weight: 900;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-replay {
+  background: var(--color-primary);
+  color: white;
+}
+
+.btn-home {
+  border: 2px solid #e0d8ff;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
