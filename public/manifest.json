@@ -1,0 +1,14 @@
+{
+  "name": "Little Learners",
+  "short_name": "LittleLearners",
+  "description": "Learn English and Chinese — for Thai kids",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f0eeff",
+  "theme_color": "#6c3bf5",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/panda.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/panda.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
