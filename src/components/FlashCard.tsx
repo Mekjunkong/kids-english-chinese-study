@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import type { Category, ChineseCategory, ChineseWord, Mode, Word } from '../data/types'
-import { sayCN, sayEN } from '../utils/speech'
+import { sayCN, sayEN, sayTH } from '../utils/speech'
 import StrokeCard from './StrokeCard'
 
 interface Props {
   mode: Mode
   category: Category | ChineseCategory
   onStartQuiz: () => void
+  onCompleteDeck: () => void
   onBack: () => void
 }
 
@@ -18,7 +19,94 @@ function isChineseCategory(category: Category | ChineseCategory): category is Ch
   return 'chinese' in category
 }
 
-export default function FlashCard({ mode, category, onStartQuiz, onBack }: Props) {
+const ENGLISH_PHONETICS: Record<string, string> = {
+  apple: 'ap-uhl',
+  baby: 'bay-bee',
+  bag: 'bag',
+  banana: 'buh-na-nuh',
+  bird: 'burd',
+  black: 'blak',
+  blue: 'bloo',
+  bone: 'bohn',
+  book: 'buuk',
+  brain: 'brayn',
+  bread: 'bred',
+  brother: 'bruh-thur',
+  brown: 'brown',
+  cat: 'kæt',
+  cloudy: 'klow-dee',
+  cold: 'kohld',
+  computer: 'kuhm-pyoo-ter',
+  dog: 'dawg',
+  ear: 'eer',
+  egg: 'eg',
+  eight: 'ayt',
+  elephant: 'el-uh-fuhnt',
+  eye: 'ai',
+  family: 'fam-uh-lee',
+  father: 'fah-thur',
+  fish: 'fish',
+  five: 'faiv',
+  food: 'food',
+  foot: 'fuut',
+  four: 'for',
+  frog: 'frog',
+  green: 'green',
+  hand: 'hand',
+  heart: 'hart',
+  home: 'hohm',
+  hot: 'hot',
+  ice: 'ais',
+  lion: 'lai-uhn',
+  love: 'luv',
+  milk: 'milk',
+  monkey: 'muhng-kee',
+  mother: 'muh-thur',
+  mouth: 'mowth',
+  nine: 'nain',
+  nose: 'nohz',
+  orange: 'or-inj',
+  paper: 'pay-per',
+  pen: 'pen',
+  pencil: 'pen-suhl',
+  pet: 'pet',
+  pink: 'pingk',
+  pizza: 'peet-suh',
+  purple: 'pur-puhl',
+  rabbit: 'rab-it',
+  rainy: 'ray-nee',
+  rainbow: 'rayn-boh',
+  red: 'red',
+  rice: 'rais',
+  ruler: 'roo-ler',
+  school: 'skool',
+  science: 'sai-uhns',
+  seven: 'sev-uhn',
+  sister: 'sis-ter',
+  six: 'siks',
+  snowy: 'snoh-ee',
+  stormy: 'stor-mee',
+  sunny: 'sun-ee',
+  ten: 'ten',
+  three: 'three',
+  tiger: 'tai-ger',
+  tooth: 'tooth',
+  triangle: 'trai-ang-guhl',
+  two: 'too',
+  water: 'waw-ter',
+  wave: 'wayv',
+  weather: 'weh-ther',
+  white: 'wait',
+  windy: 'win-dee',
+  yellow: 'yel-oh',
+}
+
+function getEnglishPhonetic(text: string) {
+  const key = text.toLowerCase().split(' ')[0]
+  return ENGLISH_PHONETICS[key] ?? text.toLowerCase()
+}
+
+export default function FlashCard({ mode, category, onStartQuiz, onCompleteDeck, onBack }: Props) {
   const [index, setIndex] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const isCN = mode === 'chinese'
@@ -31,13 +119,17 @@ export default function FlashCard({ mode, category, onStartQuiz, onBack }: Props
     const delay = window.setTimeout(() => {
       if (cnWord) sayCN(cnWord.chinese)
       if (enWord) sayEN(enWord.english)
-    }, 400)
+    }, 500)
     return () => window.clearTimeout(delay)
   }, [cnWord, enWord, index])
 
   function speakCurrent() {
     if (cnWord) sayCN(cnWord.chinese)
     if (enWord) sayEN(enWord.english)
+  }
+
+  function speakThai() {
+    sayTH(word.thai)
   }
 
   function handleFlip() {
@@ -51,6 +143,9 @@ export default function FlashCard({ mode, category, onStartQuiz, onBack }: Props
       setIndex((value) => value + 1)
     }
   }
+
+  const progress = ((index + 1) / words.length) * 100
+  const phonetics = cnWord ? cnWord.pinyin : getEnglishPhonetic((word as Word).english)
 
   function goPrev() {
     if (index > 0) {
@@ -85,6 +180,17 @@ export default function FlashCard({ mode, category, onStartQuiz, onBack }: Props
       >
         <div className="flip-card-inner">
           <div className="flip-card-front">
+            <button
+              className="card-speak-btn"
+              onClick={(event) => {
+                event.stopPropagation()
+                speakCurrent()
+              }}
+              type="button"
+              aria-label="ฟังคำศัพท์ / Listen"
+            >
+              🔊
+            </button>
             <span className="fc-emoji">{word.emoji}</span>
             {cnWord ? (
               <>
@@ -96,12 +202,25 @@ export default function FlashCard({ mode, category, onStartQuiz, onBack }: Props
             ) : (
               <p className="fc-word">{word.english}</p>
             )}
-            <p className="fc-tap-hint">👆 แตะเพื่อดูความหมาย</p>
+            <p className="fc-tap-hint">👆 แตะเพื่อดูความหมาย / Tap to reveal</p>
           </div>
 
           <div className="flip-card-back">
+            <button
+              className="card-speak-btn"
+              onClick={(event) => {
+                event.stopPropagation()
+                speakThai()
+              }}
+              type="button"
+              aria-label="ฟังคำแปลไทย / Listen Thai"
+            >
+              🔊
+            </button>
+            <span className="fc-back-emoji">{word.emoji}</span>
             {isCN && cnWord && <StrokeCard character={cnWord.chinese} autoAnimate={flipped} />}
             <p className="fc-meaning">{word.thai}</p>
+            <p className="fc-phonetic">{phonetics}</p>
             {cnWord?.english && <p className="fc-meaning-sub">{cnWord.english}</p>}
           </div>
         </div>
@@ -114,6 +233,15 @@ export default function FlashCard({ mode, category, onStartQuiz, onBack }: Props
             className={`fc-dot${dotIndex === index ? ' is-active' : dotIndex < index ? ' is-done' : ''}`}
           />
         ))}
+      </div>
+
+      <div className="fc-progress-wrap" aria-label={`Card ${index + 1} of ${words.length}`}>
+        <p className="fc-progress-label">
+          Card {index + 1} of {words.length} · ใบที่ {index + 1} จาก {words.length}
+        </p>
+        <div className="fc-progress-track">
+          <div className="fc-progress-fill" style={{ width: `${progress}%` }} />
+        </div>
       </div>
 
       {index < words.length - 1 ? (
@@ -133,7 +261,10 @@ export default function FlashCard({ mode, category, onStartQuiz, onBack }: Props
             </button>
           )}
           <button className="fc-btn-quiz" onClick={onStartQuiz} type="button">
-            🎮 เริ่มทำแบบทดสอบ!
+            🎮 เริ่มทำแบบทดสอบ! / Start Quiz
+          </button>
+          <button className="fc-btn-complete" onClick={onCompleteDeck} type="button">
+            🎉 จบบัตรคำ / Finish Deck +2 ⭐
           </button>
         </div>
       )}

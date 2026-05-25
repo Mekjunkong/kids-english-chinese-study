@@ -5,7 +5,8 @@ import { useProgress } from '../hooks/useProgress'
 interface Props {
   mode: Mode
   categories: Array<Category | ChineseCategory>
-  onStart: (category: Category | ChineseCategory) => void
+  onStartFlashcard: (category: Category | ChineseCategory) => void
+  onStartQuiz: (category: Category | ChineseCategory) => void
   onLangPick: () => void
 }
 
@@ -13,7 +14,7 @@ function isChineseCategory(category: Category | ChineseCategory): category is Ch
   return 'chinese' in category
 }
 
-export default function HomeScreen({ mode, categories, onStart, onLangPick }: Props) {
+export default function HomeScreen({ mode, categories, onStartFlashcard, onStartQuiz, onLangPick }: Props) {
   const { progress } = useProgress()
   const isCN = mode === 'chinese'
 
@@ -42,7 +43,7 @@ export default function HomeScreen({ mode, categories, onStart, onLangPick }: Pr
           const cnCategory = isChineseCategory(category) ? category : null
 
           return (
-            <button
+            <article
               key={category.id}
               className={`cat-card${completed ? ' is-completed' : ''}`}
               style={
@@ -51,19 +52,21 @@ export default function HomeScreen({ mode, categories, onStart, onLangPick }: Pr
                   '--quiz-hue': category.hue,
                 } as React.CSSProperties
               }
-              onClick={() => onStart(category)}
-              type="button"
               aria-label={cnCategory ? `เรียน ${category.thai} — ${cnCategory.chinese}` : `เรียน ${category.thai} — ${category.english}`}
             >
               <span className="cat-icon">{category.emoji}</span>
               <strong className="cat-primary">{cnCategory ? cnCategory.chinese : category.english}</strong>
               {cnCategory && <span className="cat-pinyin">{cnCategory.pinyin}</span>}
               <span className="cat-thai">{category.thai}</span>
-              <span className="mode-actions" aria-hidden="true">
-                <span className="mode-action">บัตรคำ</span>
-                <span className="mode-action">Quiz</span>
+              <span className="mode-actions">
+                <button className="mode-action" onClick={() => onStartFlashcard(category)} type="button">
+                  บัตรคำ / Cards
+                </button>
+                <button className="mode-action" onClick={() => onStartQuiz(category)} type="button">
+                  Quiz / แบบทดสอบ
+                </button>
               </span>
-            </button>
+            </article>
           )
         })}
       </div>

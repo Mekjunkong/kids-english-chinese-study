@@ -186,7 +186,9 @@
   box-shadow: var(--shadow-card);
   border: 3px solid rgba(255, 255, 255, 0.6);
   overflow: hidden;
+  cursor: default;
   animation: bounceIn 0.5s ease both;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
 }
 
 .cat-card::before {
@@ -226,7 +228,7 @@
 
 .cat-primary {
   position: relative;
-  font-size: var(--font-size-xl);
+  font-size: 22px;
   font-weight: 900;
   color: var(--color-text);
   text-align: center;
@@ -253,10 +255,23 @@
   flex: 1;
   min-height: 38px;
   border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.78);
+  background: white;
   color: var(--color-text);
+  border: 2px solid rgba(108, 59, 245, 0.18);
+  box-shadow: 0 2px 8px rgba(26, 16, 64, 0.08);
   font-size: var(--font-size-sm);
   font-weight: 900;
+  cursor: pointer;
+}
+
+.mode-action:hover {
+  transform: scale(1.02);
+  border-color: rgba(108, 59, 245, 0.48);
+}
+
+.stars-display.is-sparkling,
+.quiz-stars.is-sparkling {
+  animation: starSparkle 0.48s ease;
 }
 
 @media (max-width: 380px) {

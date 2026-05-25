@@ -37,6 +37,7 @@ export default function QuizScreen({
   const cnWord = isChineseWord(word) ? word : null
   const enWord = cnWord ? null : (word as Word)
   const progress = ((qi + (feedback === 'correct' ? 1 : 0)) / total) * 100
+  const correctAnswer = cnWord ? cnWord.thai : enWord?.english
 
   useEffect(() => {
     const delay = window.setTimeout(() => {
@@ -93,12 +94,12 @@ export default function QuizScreen({
 
         {feedback === 'correct' && (
           <div className="feedback-chip is-correct" role="status">
-            ✓ ถูกต้อง! 🎉
+            ✅ เก่งมาก! (Great job!)
           </div>
         )}
         {feedback === 'wrong' && (
           <div className="feedback-chip is-wrong" role="status">
-            ลองใหม่นะ 😊
+            ❌ คำตอบที่ถูกคือ {correctAnswer}
           </div>
         )}
       </div>
@@ -106,11 +107,11 @@ export default function QuizScreen({
       <div className="choices" role="group" aria-label="เลือกคำตอบ">
         {question.options.map((option) => {
           const isSelected = selected === option
-          const isCorrectAnswer = cnWord ? option === cnWord.thai : option === enWord?.english
-          const state = isSelected
-            ? feedback === 'correct' && isCorrectAnswer
+          const isCorrectAnswer = option === correctAnswer
+          const state = feedback
+            ? isCorrectAnswer
               ? 'correct'
-              : feedback === 'wrong'
+              : isSelected
                 ? 'wrong'
                 : ''
             : ''
@@ -121,7 +122,7 @@ export default function QuizScreen({
               className={`choice-btn${state ? ` is-${state}` : ''}`}
               onClick={() => onPick(option)}
               type="button"
-              disabled={feedback === 'correct'}
+              disabled={Boolean(feedback)}
               aria-pressed={isSelected}
             >
               {option}

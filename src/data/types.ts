@@ -44,6 +44,8 @@ export interface CnQuestion {
   options: string[]
 }
 
+export type CompleteKind = 'flashcard' | 'quiz'
+
 export interface Badge {
   id: string
   emoji: string

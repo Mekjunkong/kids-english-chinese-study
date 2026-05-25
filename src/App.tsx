@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { CN_CATEGORIES } from './data/chinese'
 import { EN_CATEGORIES } from './data/english'
-import type { Category, ChineseCategory, Feedback, Mode, Screen } from './data/types'
+import type { Category, ChineseCategory, CompleteKind, Feedback, Mode, Screen } from './data/types'
 import { useProgress } from './hooks/useProgress'
 import { buildCnQuestions, buildEnQuestions } from './utils/quiz'
-import { sayCN, sayEN } from './utils/speech'
+import { playDing, sayCN, sayEN } from './utils/speech'
 import Complete from './components/Complete'
 import FlashCard from './components/FlashCard'
 import HomeScreen from './components/HomeScreen'
@@ -29,6 +29,8 @@ export default function App() {
   const [selected, setSelected] = useState<string | null>(null)
   const [feedback, setFeedback] = useState<Feedback>(null)
   const [stars, setStars] = useState(0)
+  const [completionKind, setCompletionKind] = useState<CompleteKind>('quiz')
+  const [completionStars, setCompletionStars] = useState(0)
   const [newBadges, setNewBadges] = useState<string[]>([])
   const { recordSession } = useProgress()
 
@@ -37,10 +39,11 @@ export default function App() {
     setSelected(null)
     setFeedback(null)
     setStars(0)
+    setCompletionStars(0)
     setNewBadges([])
   }
 
-  function startEN(category: Category) {
+  function startENFlashcard(category: Category) {
     setMode('english')
     setEnCat(category)
     setEnQs(buildEnQuestions(category))
@@ -48,12 +51,28 @@ export default function App() {
     setScreen('en-flashcard')
   }
 
-  function startCN(category: ChineseCategory) {
+  function startCNFlashcard(category: ChineseCategory) {
     setMode('chinese')
     setCnCat(category)
     setCnQs(buildCnQuestions(category))
     resetQuiz()
     setScreen('cn-flashcard')
+  }
+
+  function startENQuiz(category: Category) {
+    setMode('english')
+    setEnCat(category)
+    setEnQs(buildEnQuestions(category))
+    resetQuiz()
+    setScreen('en-quiz')
+  }
+
+  function startCNQuiz(category: ChineseCategory) {
+    setMode('chinese')
+    setCnCat(category)
+    setCnQs(buildCnQuestions(category))
+    resetQuiz()
+    setScreen('cn-quiz')
   }
 
   function beginQuiz() {
@@ -64,11 +83,31 @@ export default function App() {
     setScreen(mode === 'english' ? 'en-quiz' : 'cn-quiz')
   }
 
+  function quizBonus(correct: number, total: number) {
+    const percentage = total > 0 ? correct / total : 0
+    if (percentage === 1) return 5
+    if (percentage >= 0.8) return 3
+    if (percentage >= 0.6) return 2
+    if (correct > 0) return 1
+    return 0
+  }
+
+  function completeCategory(kind: CompleteKind, earnedStars: number) {
+    const category = mode === 'english' ? enCat : cnCat
+    setCompletionKind(kind)
+    setCompletionStars(earnedStars)
+    setNewBadges(recordSession(earnedStars, category.id))
+    setScreen('complete')
+  }
+
+  function completeFlashcards() {
+    completeCategory('flashcard', 2)
+  }
+
   function advance(total: number, earnedStars = stars) {
     if (qi + 1 >= total) {
-      const category = mode === 'english' ? enCat : cnCat
-      setNewBadges(recordSession(earnedStars, category.id))
-      setScreen('complete')
+      const bonus = quizBonus(earnedStars, total)
+      completeCategory('quiz', earnedStars + bonus)
     } else {
       setQi((index) => index + 1)
       setSelected(null)
@@ -85,14 +124,12 @@ export default function App() {
       const nextStars = stars + 1
       setFeedback('correct')
       setStars(nextStars)
+      playDing()
       sayEN(correct)
       window.setTimeout(() => advance(enQs.length, nextStars), 1100)
     } else {
       setFeedback('wrong')
-      window.setTimeout(() => {
-        setSelected(null)
-        setFeedback(null)
-      }, 750)
+      window.setTimeout(() => advance(enQs.length, stars), 1300)
     }
   }
 
@@ -105,14 +142,12 @@ export default function App() {
       const nextStars = stars + 1
       setFeedback('correct')
       setStars(nextStars)
+      playDing()
       sayCN(cnQs[qi].word.chinese)
       window.setTimeout(() => advance(cnQs.length, nextStars), 1100)
     } else {
       setFeedback('wrong')
-      window.setTimeout(() => {
-        setSelected(null)
-        setFeedback(null)
-      }, 750)
+      window.setTimeout(() => advance(cnQs.length, stars), 1300)
     }
   }
 
@@ -140,7 +175,8 @@ export default function App() {
       <HomeScreen
         mode="english"
         categories={EN_CATEGORIES}
-        onStart={(category) => startEN(category as Category)}
+        onStartFlashcard={(category) => startENFlashcard(category as Category)}
+        onStartQuiz={(category) => startENQuiz(category as Category)}
         onLangPick={goLangPick}
       />
     )
@@ -149,14 +185,31 @@ export default function App() {
       <HomeScreen
         mode="chinese"
         categories={CN_CATEGORIES}
-        onStart={(category) => startCN(category as ChineseCategory)}
+        onStartFlashcard={(category) => startCNFlashcard(category as ChineseCategory)}
+        onStartQuiz={(category) => startCNQuiz(category as ChineseCategory)}
         onLangPick={goLangPick}
       />
     )
   } else if (screen === 'en-flashcard') {
-    content = <FlashCard mode="english" category={enCat} onStartQuiz={beginQuiz} onBack={() => setScreen('en-home')} />
+    content = (
+      <FlashCard
+        mode="english"
+        category={enCat}
+        onStartQuiz={beginQuiz}
+        onCompleteDeck={completeFlashcards}
+        onBack={() => setScreen('en-home')}
+      />
+    )
   } else if (screen === 'cn-flashcard') {
-    content = <FlashCard mode="chinese" category={cnCat} onStartQuiz={beginQuiz} onBack={() => setScreen('cn-home')} />
+    content = (
+      <FlashCard
+        mode="chinese"
+        category={cnCat}
+        onStartQuiz={beginQuiz}
+        onCompleteDeck={completeFlashcards}
+        onBack={() => setScreen('cn-home')}
+      />
+    )
   } else if (screen === 'en-quiz' && enQs[qi]) {
     content = (
       <QuizScreen
@@ -190,10 +243,14 @@ export default function App() {
   } else if (screen === 'complete') {
     content = (
       <Complete
+        mode={mode}
+        kind={completionKind}
+        category={mode === 'english' ? enCat : cnCat}
         stars={stars}
         total={mode === 'english' ? enQs.length : cnQs.length}
+        starsEarned={completionStars}
         newBadges={newBadges}
-        onReplay={() => (mode === 'english' ? startEN(enCat) : startCN(cnCat))}
+        onReplay={() => (completionKind === 'quiz' ? (mode === 'english' ? startENQuiz(enCat) : startCNQuiz(cnCat)) : (mode === 'english' ? startENFlashcard(enCat) : startCNFlashcard(cnCat)))}
         onHome={goHome}
       />
     )
