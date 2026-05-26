@@ -1,4 +1,6 @@
 import { useCallback, useState } from 'react'
+import { CN_CATEGORIES } from '../data/chinese'
+import { EN_CATEGORIES } from '../data/english'
 
 interface Progress {
   totalStars: number
@@ -18,21 +20,8 @@ const DEFAULT_PROGRESS: Progress = {
   badges: [],
 }
 
-const ENGLISH_IDS = ['animals', 'colors', 'numbers', 'food', 'body', 'family', 'school', 'weather']
-const CHINESE_IDS = [
-  'cn-family',
-  'cn-numbers',
-  'cn-food',
-  'cn-school',
-  'cn-time',
-  'cn-places',
-  'cn-actions',
-  'cn-transport',
-  'cn-greetings',
-  'cn-adjectives',
-  'cn-colors',
-  'cn-animals',
-]
+const ENGLISH_IDS = EN_CATEGORIES.map((category) => category.id)
+const CHINESE_IDS = CN_CATEGORIES.map((category) => category.id)
 
 function withEarnedBadges(progress: Progress, totalStars: number, completedCategories: string[]) {
   const badges = [...progress.badges]

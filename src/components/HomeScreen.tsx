@@ -20,6 +20,10 @@ export default function HomeScreen({ mode, categories, onStartFlashcard, onStart
   const isCN = mode === 'chinese'
   const previousStars = useRef(progress.totalStars)
   const [sparkling, setSparkling] = useState(false)
+  const completedInMode = categories.filter((category) => progress.completedCategories.includes(category.id)).length
+  const dailyGoal = 5
+  const dailyGoalProgress = Math.min(progress.streak, dailyGoal)
+  const dailyGoalPercent = (dailyGoalProgress / dailyGoal) * 100
 
   useEffect(() => {
     if (progress.totalStars > previousStars.current) {
@@ -42,11 +46,39 @@ export default function HomeScreen({ mode, categories, onStartFlashcard, onStart
 
       <div className="app-header">
         <span className="mascot">{isCN ? '🐼' : '🦉'}</span>
+        <p className="eyebrow">{isCN ? 'Chinese path' : 'English path'} · 5 minute practice</p>
         <h1 className="app-title">Little Learners</h1>
         <p className="app-subtitle">
-          {isCN ? 'เรียนภาษาจีน HSK 1! 🇨🇳' : 'เรียนภาษาอังกฤษกันเถอะ! 🇬🇧'}
+          {isCN ? 'ฟัง พูด อ่านจีน HSK 1 แบบสนุก ๆ 🇨🇳' : 'ฟังเสียง ดูภาพ แล้วตอบคำศัพท์อังกฤษ 🇬🇧'}
         </p>
       </div>
+
+      <section className="learning-flow" aria-label="Learning flow">
+        <span>1 ดูภาพ</span>
+        <span>2 ฟังเสียง</span>
+        <span>3 พลิกบัตร</span>
+        <span>4 เล่น Quiz</span>
+      </section>
+
+      <section className="progress-strip" aria-label="สรุปความก้าวหน้า">
+        <div className="progress-stat">
+          <span className="stat-value">{completedInMode}/{categories.length}</span>
+          <span className="stat-label">หมวดที่ผ่าน</span>
+        </div>
+        <span className="stat-divider" aria-hidden="true" />
+        <div className="progress-stat">
+          <span className="stat-value">🔥 {progress.streak}</span>
+          <span className="stat-label">วันต่อเนื่อง</span>
+        </div>
+        <span className="stat-divider" aria-hidden="true" />
+        <div className="progress-stat daily-goal-stat">
+          <span className="stat-value">{dailyGoalProgress}/{dailyGoal}</span>
+          <span className="stat-label">เป้าหมายวันนี้</span>
+          <span className="daily-goal-track" aria-hidden="true">
+            <span className="daily-goal-fill" style={{ width: `${dailyGoalPercent}%` }} />
+          </span>
+        </div>
+      </section>
 
       <p className="section-title">เลือกหมวดที่อยากเรียน</p>
 
@@ -71,7 +103,10 @@ export default function HomeScreen({ mode, categories, onStartFlashcard, onStart
               <strong className="cat-primary">{cnCategory ? cnCategory.chinese : category.english}</strong>
               {cnCategory && <span className="cat-pinyin">{cnCategory.pinyin}</span>}
               <span className="cat-thai">{category.thai}</span>
-              <span className="cat-word-count">{category.words.length} คำ</span>
+              <span className="cat-word-count">{category.words.length} คำ · {completed ? 'ผ่านแล้ว' : 'ยังไม่ผ่าน'}</span>
+              <span className="cat-progress" aria-hidden="true">
+                <span className="cat-progress-fill" style={{ width: completed ? '100%' : '18%' }} />
+              </span>
               <span className="mode-actions">
                 <button className="mode-action" onClick={() => onStartFlashcard(category)} type="button">
                   บัตรคำ / Cards
