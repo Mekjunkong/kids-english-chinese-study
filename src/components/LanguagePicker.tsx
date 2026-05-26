@@ -13,7 +13,7 @@ export default function LanguagePicker({ onSelect }: Props) {
       <div className="app-header">
         <span className="mascot">🐼</span>
         <h1 className="app-title">Little Learners</h1>
-        <p className="app-subtitle">เลือกภาษาที่อยากเรียน</p>
+        <p className="app-subtitle">เลือกภาษาที่อยากฝึกวันนี้</p>
       </div>
 
       <div className="progress-strip">
@@ -42,7 +42,7 @@ export default function LanguagePicker({ onSelect }: Props) {
         >
           <span className="lang-flag">🇬🇧</span>
           <strong className="lang-name">English</strong>
-          <span className="lang-sub">ภาษาอังกฤษ</span>
+          <span className="lang-sub">ฝึกคำศัพท์จากภาพและเสียง</span>
         </button>
 
         <button
@@ -53,7 +53,7 @@ export default function LanguagePicker({ onSelect }: Props) {
         >
           <span className="lang-flag">🇨🇳</span>
           <strong className="lang-name">中文</strong>
-          <span className="lang-sub">ภาษาจีน (HSK 1)</span>
+          <span className="lang-sub">ฝึกคำจีน พินอิน และลำดับขีด</span>
         </button>
       </div>
     </div>

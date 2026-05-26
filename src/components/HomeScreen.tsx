@@ -46,10 +46,10 @@ export default function HomeScreen({ mode, categories, onStartFlashcard, onStart
 
       <div className="app-header">
         <span className="mascot">{isCN ? '🐼' : '🦉'}</span>
-        <p className="eyebrow">{isCN ? 'Chinese path' : 'English path'} · 5 minute practice</p>
+        <p className="eyebrow">{isCN ? 'Chinese path' : 'English path'} · ฝึกวันละ 5 นาที</p>
         <h1 className="app-title">Little Learners</h1>
         <p className="app-subtitle">
-          {isCN ? 'ฟัง พูด อ่านจีน HSK 1 แบบสนุก ๆ 🇨🇳' : 'ฟังเสียง ดูภาพ แล้วตอบคำศัพท์อังกฤษ 🇬🇧'}
+          {isCN ? 'ฝึกคำจีน พินอิน และลำดับขีด HSK 1 🇨🇳' : 'ฝึกคำศัพท์อังกฤษจากภาพและเสียง 🇬🇧'}
         </p>
       </div>
 
@@ -103,16 +103,16 @@ export default function HomeScreen({ mode, categories, onStartFlashcard, onStart
               <strong className="cat-primary">{cnCategory ? cnCategory.chinese : category.english}</strong>
               {cnCategory && <span className="cat-pinyin">{cnCategory.pinyin}</span>}
               <span className="cat-thai">{category.thai}</span>
-              <span className="cat-word-count">{category.words.length} คำ · {completed ? 'ผ่านแล้ว' : 'ยังไม่ผ่าน'}</span>
+              <span className="cat-word-count">{category.words.length} คำ · {completed ? 'ผ่านแล้ว' : 'เริ่มได้เลย'}</span>
               <span className="cat-progress" aria-hidden="true">
                 <span className="cat-progress-fill" style={{ width: completed ? '100%' : '18%' }} />
               </span>
               <span className="mode-actions">
-                <button className="mode-action" onClick={() => onStartFlashcard(category)} type="button">
-                  บัตรคำ / Cards
+                <button className="mode-action mode-action-primary" onClick={() => onStartFlashcard(category)} type="button">
+                  {completed ? 'ทบทวน' : 'เริ่มเรียน'}
                 </button>
-                <button className="mode-action" onClick={() => onStartQuiz(category)} type="button">
-                  Quiz / แบบทดสอบ
+                <button className="mode-action mode-action-secondary" onClick={() => onStartQuiz(category)} type="button">
+                  Quiz
                 </button>
               </span>
             </article>

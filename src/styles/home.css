@@ -344,6 +344,18 @@
   cursor: pointer;
 }
 
+.mode-action-primary {
+  flex: 1.4;
+  background: var(--color-text);
+  color: var(--color-surface);
+  border-color: transparent;
+}
+
+.mode-action-secondary {
+  color: var(--color-primary);
+  background: var(--color-surface);
+}
+
 .mode-action:hover {
   transform: scale(1.02);
   border-color: rgba(108, 59, 245, 0.48);

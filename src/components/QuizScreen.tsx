@@ -150,12 +150,12 @@ export default function QuizScreen({
 
       {feedback === 'correct' && (
         <div className="answer-toast is-correct" role="status">
-          🎉 เก่งมาก! / Great job!
+          🎉 เก่งมาก! คำนี้คือ {correctAnswer}
         </div>
       )}
       {feedback === 'wrong' && (
         <div className="answer-toast is-wrong" role="status">
-          อ๊ะ! คำตอบที่ถูกต้องคือ {correctAnswer} / Oops! Answer: {correctAnswer}
+          เกือบแล้ว คำตอบคือ {correctAnswer}
         </div>
       )}
     </div>
