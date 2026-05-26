@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { Category, ChineseCategory, ChineseWord, Mode, Word } from '../data/types'
-import { sayCN, sayEN, sayTH } from '../utils/speech'
+import { sayCN, sayEN, sayTH, type SpeechResult } from '../utils/speech'
 import StrokeCard from './StrokeCard'
 
 interface Props {
@@ -120,10 +120,19 @@ function getPracticeSentence(word: Word | ChineseWord) {
   }
 }
 
+const VOICE_UNSUPPORTED_MESSAGE =
+  'เสียงอาจไม่ทำงานใน Messenger/LINE browser นี้ กรุณาเปิดลิงก์ใน Chrome หรือ Safari แล้วกด 🔊 อีกครั้ง / Voice may not work inside this in-app browser. Please open in Chrome or Safari.'
+
+function getVoiceNotice(result: SpeechResult) {
+  if (result === 'spoken') return ''
+  return VOICE_UNSUPPORTED_MESSAGE
+}
+
 export default function FlashCard({ mode, category, onStartQuiz, onCompleteDeck, onBack }: Props) {
   const [index, setIndex] = useState(0)
   const [flipped, setFlipped] = useState(false)
   const [speakingSide, setSpeakingSide] = useState<'front' | 'back' | null>(null)
+  const [voiceNotice, setVoiceNotice] = useState('')
   const [completeOpen, setCompleteOpen] = useState(false)
   const [deckAwarded, setDeckAwarded] = useState(false)
   const isCN = mode === 'chinese'
@@ -148,13 +157,14 @@ export default function FlashCard({ mode, category, onStartQuiz, onCompleteDeck,
 
   function speakCurrent() {
     showSpeakingPulse('front')
-    if (cnWord) sayCN(cnWord.chinese)
-    if (enWord) sayEN(enWord.english)
+    const result = cnWord ? sayCN(cnWord.chinese) : enWord ? sayEN(enWord.english) : 'failed'
+    setVoiceNotice(getVoiceNotice(result))
   }
 
   function speakThai() {
     showSpeakingPulse('back')
-    sayTH(word.thai)
+    const result = sayTH(word.thai)
+    setVoiceNotice(getVoiceNotice(result))
   }
 
   function handleFlip() {
@@ -163,6 +173,7 @@ export default function FlashCard({ mode, category, onStartQuiz, onCompleteDeck,
   }
 
   function goNext() {
+    setVoiceNotice('')
     if (index < words.length - 1) {
       setFlipped(false)
       setIndex((value) => value + 1)
@@ -182,6 +193,7 @@ export default function FlashCard({ mode, category, onStartQuiz, onCompleteDeck,
 
   function goPrev() {
     if (index > 0) {
+      setVoiceNotice('')
       setFlipped(false)
       setIndex((value) => value - 1)
     }
@@ -268,6 +280,8 @@ export default function FlashCard({ mode, category, onStartQuiz, onCompleteDeck,
           </div>
         </div>
       </div>
+
+      {voiceNotice && <p className="voice-warning" role="status">{voiceNotice}</p>}
 
       <div className="fc-progress-wrap" aria-label={`Card ${index + 1} of ${words.length}`}>
         <p className="fc-progress-label">

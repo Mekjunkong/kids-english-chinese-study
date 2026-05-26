@@ -171,6 +171,21 @@
   animation: speakerRing 0.75s ease-out infinite;
 }
 
+.voice-warning {
+  width: 100%;
+  margin-top: calc(var(--space-md) * -0.5);
+  padding: var(--space-sm) var(--space-md);
+  border: 2px solid rgba(255, 193, 7, 0.55);
+  border-radius: var(--radius-lg);
+  background: #fff8d9;
+  color: #614600;
+  font-size: var(--font-size-sm);
+  font-weight: 800;
+  line-height: 1.45;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
 .stroke-actions {
   display: flex;
   gap: var(--space-sm);

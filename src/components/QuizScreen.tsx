@@ -1,7 +1,7 @@
 import type React from 'react'
 import { useEffect, useState } from 'react'
 import type { Category, ChineseCategory, ChineseWord, CnQuestion, EnQuestion, Feedback, Mode, Word } from '../data/types'
-import { sayCN, sayEN } from '../utils/speech'
+import { sayCN, sayEN, type SpeechResult } from '../utils/speech'
 
 interface Props {
   mode: Mode
@@ -19,6 +19,14 @@ interface Props {
 
 function isChineseWord(word: Word | ChineseWord): word is ChineseWord {
   return 'chinese' in word
+}
+
+const VOICE_UNSUPPORTED_MESSAGE =
+  'เสียงอาจไม่ทำงานใน Messenger/LINE browser นี้ กรุณาเปิดลิงก์ใน Chrome หรือ Safari แล้วกด 🔊 อีกครั้ง / Voice may not work inside this in-app browser. Please open in Chrome or Safari.'
+
+function getVoiceNotice(result: SpeechResult) {
+  if (result === 'spoken') return ''
+  return VOICE_UNSUPPORTED_MESSAGE
 }
 
 export default function QuizScreen({
@@ -41,6 +49,8 @@ export default function QuizScreen({
   const progress = ((qi + (feedback === 'correct' ? 1 : 0)) / total) * 100
   const correctAnswer = cnWord ? cnWord.thai : enWord?.english
   const [isSpeaking, setIsSpeaking] = useState(false)
+  const [voiceNotice, setVoiceNotice] = useState<{ qi: number; message: string } | null>(null)
+  const visibleVoiceNotice = voiceNotice?.qi === qi ? voiceNotice.message : ''
 
   function showSpeakingPulse() {
     setIsSpeaking(true)
@@ -58,8 +68,9 @@ export default function QuizScreen({
 
   function handleSpeak() {
     showSpeakingPulse()
-    if (cnWord) sayCN(cnWord.chinese)
-    if (enWord) sayEN(enWord.english)
+    const result = cnWord ? sayCN(cnWord.chinese) : enWord ? sayEN(enWord.english) : 'failed'
+    const message = getVoiceNotice(result)
+    setVoiceNotice(message ? { qi, message } : null)
   }
 
   return (
@@ -103,6 +114,8 @@ export default function QuizScreen({
         )}
 
       </div>
+
+      {visibleVoiceNotice && <p className="voice-warning" role="status">{visibleVoiceNotice}</p>}
 
       <div className="choices" role="group" aria-label="เลือกคำตอบ">
         {question.options.map((option) => {

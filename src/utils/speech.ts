@@ -1,39 +1,70 @@
-export function sayEN(text: string) {
-  if (!('speechSynthesis' in window)) return
-  window.speechSynthesis.cancel()
-  const u = new SpeechSynthesisUtterance(text)
-  u.lang = 'en-US'
-  u.rate = 0.78
-  u.pitch = 1.15
-  window.speechSynthesis.speak(u)
+export type SpeechResult = 'spoken' | 'unsupported' | 'limited' | 'failed'
+
+export function canUseSpeech() {
+  return (
+    typeof window !== 'undefined' &&
+    'speechSynthesis' in window &&
+    'SpeechSynthesisUtterance' in window
+  )
 }
 
-export function sayCN(text: string) {
-  if (!('speechSynthesis' in window)) return
-  window.speechSynthesis.cancel()
-  const u = new SpeechSynthesisUtterance(text)
-  u.lang = 'zh-CN'
-  u.rate = 0.82
-  u.pitch = 1.1
-  window.speechSynthesis.speak(u)
+function isLikelyInAppBrowser() {
+  if (typeof navigator === 'undefined') return false
+  return /FBAN|FBAV|FB_IAB|FB4A|Messenger|Instagram|Line\//i.test(navigator.userAgent)
 }
 
-export function sayTH(text: string) {
-  if (!('speechSynthesis' in window)) return
-  window.speechSynthesis.cancel()
-  const u = new SpeechSynthesisUtterance(text)
-  u.lang = 'th-TH'
-  u.rate = 0.82
-  u.pitch = 1.08
-  window.speechSynthesis.speak(u)
+function findVoice(lang: string) {
+  if (!canUseSpeech()) return undefined
+  const normalizedLang = lang.toLowerCase()
+  const baseLang = normalizedLang.split('-')[0]
+  return window.speechSynthesis
+    .getVoices()
+    .find((voice) => voice.lang.toLowerCase() === normalizedLang || voice.lang.toLowerCase().startsWith(baseLang))
+}
+
+function say(text: string, lang: string, rate: number, pitch: number): SpeechResult {
+  if (!canUseSpeech()) return 'unsupported'
+
+  try {
+    window.speechSynthesis.cancel()
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.lang = lang
+    utterance.rate = rate
+    utterance.pitch = pitch
+
+    const matchingVoice = findVoice(lang)
+    if (matchingVoice) utterance.voice = matchingVoice
+
+    window.speechSynthesis.speak(utterance)
+    return isLikelyInAppBrowser() ? 'limited' : 'spoken'
+  } catch {
+    return 'failed'
+  }
+}
+
+export function sayEN(text: string): SpeechResult {
+  return say(text, 'en-US', 0.78, 1.15)
+}
+
+export function sayCN(text: string): SpeechResult {
+  return say(text, 'zh-CN', 0.82, 1.1)
+}
+
+export function sayTH(text: string): SpeechResult {
+  return say(text, 'th-TH', 0.82, 1.08)
+}
+
+function getAudioContextClass() {
+  const audioWindow = window as typeof window & { webkitAudioContext?: typeof AudioContext }
+  return audioWindow.AudioContext || audioWindow.webkitAudioContext
 }
 
 export function playDing() {
-  const audioWindow = window as typeof window & { webkitAudioContext?: typeof AudioContext }
-  const AudioContextClass = audioWindow.AudioContext || audioWindow.webkitAudioContext
+  const AudioContextClass = getAudioContextClass()
   if (!AudioContextClass) return
 
   const ctx = new AudioContextClass()
+  if (ctx.state === 'suspended') void ctx.resume()
   const oscillator = ctx.createOscillator()
   const gain = ctx.createGain()
 
@@ -54,11 +85,11 @@ export function playDing() {
 }
 
 export function playBuzz() {
-  const audioWindow = window as typeof window & { webkitAudioContext?: typeof AudioContext }
-  const AudioContextClass = audioWindow.AudioContext || audioWindow.webkitAudioContext
+  const AudioContextClass = getAudioContextClass()
   if (!AudioContextClass) return
 
   const ctx = new AudioContextClass()
+  if (ctx.state === 'suspended') void ctx.resume()
   const oscillator = ctx.createOscillator()
   const gain = ctx.createGain()
 
