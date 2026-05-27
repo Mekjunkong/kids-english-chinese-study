@@ -1,3 +1,7 @@
+/* ─────────────────────────────────────────────────────────
+   LANGUAGE PICKER + HOME SCREEN
+   ───────────────────────────────────────────────────────── */
+
 .lang-pick,
 .home-screen {
   min-height: 100vh;
@@ -7,12 +11,20 @@
   padding: var(--space-lg) var(--space-md) var(--space-xl);
 }
 
+/* Language picker: committed purple tint — the "invitation" moment */
 .lang-pick {
   align-items: center;
   justify-content: center;
   gap: var(--space-xl);
+  background: linear-gradient(
+    160deg,
+    oklch(0.91 0.055 285) 0%,
+    oklch(0.94 0.035 290) 55%,
+    oklch(0.96 0.02 295) 100%
+  );
 }
 
+/* ─── App header ─── */
 .app-header {
   display: flex;
   flex-direction: column;
@@ -22,20 +34,21 @@
 }
 
 .mascot {
-  min-width: 96px;
-  min-height: 96px;
+  min-width: 120px;
+  min-height: 120px;
   display: inline-grid;
   place-items: center;
-  font-size: 96px;
-  filter: drop-shadow(0 4px 12px rgba(108, 59, 245, 0.25));
+  font-size: 120px;
+  filter: drop-shadow(0 8px 24px rgba(108, 59, 245, 0.3));
   animation: pandaBob 2.5s ease-in-out infinite;
 }
 
 .app-title {
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-size-3xl);
   font-weight: 900;
   color: var(--color-primary);
-  letter-spacing: 0;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
 }
 
 .app-subtitle {
@@ -44,13 +57,23 @@
   font-weight: 700;
 }
 
+/* Eyebrow — track label above title on home screen */
+.eyebrow {
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  color: var(--color-text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ─── Progress strip (used on both picker + home) ─── */
 .progress-strip {
   display: flex;
   gap: var(--space-md);
   width: 100%;
   background: var(--color-surface);
   border-radius: var(--radius-xl);
-  padding: var(--space-md) var(--space-lg);
+  padding: var(--space-lg);
   box-shadow: var(--shadow-card);
 }
 
@@ -59,27 +82,83 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 4px;
+}
+
+/* Daily goal stat carries the mini progress bar */
+.daily-goal-stat {
   gap: 2px;
 }
 
+.daily-goal-track {
+  width: 100%;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: oklch(0.91 0.035 285);
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.daily-goal-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+  transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 .stat-value {
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-2xl);
   font-weight: 900;
   color: var(--color-primary);
+  line-height: 1;
 }
 
 .stat-label {
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
   font-weight: 800;
+  text-align: center;
 }
 
 .stat-divider {
   width: 1px;
-  background: #e5e0f5;
-  margin: var(--space-xs) 0;
+  background: oklch(0.88 0.04 285);
+  margin: var(--space-sm) 0;
 }
 
+/* ─── Learning flow steps ─── */
+.learning-flow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.learning-flow::-webkit-scrollbar {
+  display: none;
+}
+
+.learning-flow span {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px var(--space-sm);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  border: 1.5px solid rgba(108, 59, 245, 0.18);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  box-shadow: 0 1px 4px rgba(108, 59, 245, 0.08);
+}
+
+/* ─── Language pick cards ─── */
 .lang-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -88,16 +167,15 @@
 }
 
 .lang-card {
-  min-height: 188px;
+  min-height: 220px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-sm);
+  gap: var(--space-md);
   padding: var(--space-xl) var(--space-md);
   border-radius: var(--radius-xl);
   background: var(--color-surface);
-  /* Claymorphism: drop shadow + inner top highlight */
   box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.9);
   border: 3px solid rgba(255, 255, 255, 0.75);
   animation: slideUp 0.4s ease both;
@@ -105,40 +183,46 @@
 }
 
 .lang-card:nth-child(2) {
-  animation-delay: 0.1s;
+  animation-delay: 0.12s;
 }
 
 .lang-card:hover {
-  transform: translateY(-4px) scale(1.02);
+  transform: translateY(-6px) scale(1.03);
   box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.9);
   border-color: var(--color-primary);
 }
 
 .lang-english {
-  background: linear-gradient(145deg, #e8f5ff, #d6eeff);
+  background: linear-gradient(145deg, #deeeff, #c4daff);
 }
 
 .lang-chinese {
-  background: linear-gradient(145deg, #fff0f0, #ffdfdf);
+  background: linear-gradient(145deg, #ffe5e5, #ffc8c8);
 }
 
 .lang-flag {
-  font-size: 56px;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.12));
+  font-size: 72px;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.15));
+  line-height: 1;
 }
 
 .lang-name {
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-2xl);
   font-weight: 900;
   color: var(--color-text);
+  line-height: 1;
 }
 
 .lang-sub {
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
   font-weight: 700;
+  text-align: center;
+  max-width: 130px;
+  line-height: 1.35;
 }
 
+/* ─── Home screen top bar ─── */
 .home-top-bar {
   display: flex;
   align-items: center;
@@ -153,7 +237,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-xs);
-  min-height: 42px;
+  min-height: 44px;
   border-radius: var(--radius-full);
   background: var(--color-surface);
   color: var(--color-primary);
@@ -167,11 +251,14 @@
   color: var(--color-text);
 }
 
+/* ─── Category grid section title ─── */
 .section-title {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-xl);
   font-weight: 900;
+  color: var(--color-text);
 }
 
+/* ─── Category grid ─── */
 .cat-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -179,17 +266,16 @@
 }
 
 .cat-card {
-  min-height: 166px;
+  min-height: 176px;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: var(--space-xs);
-  padding: var(--space-lg) var(--space-sm);
+  padding: var(--space-lg) var(--space-sm) var(--space-md);
   border-radius: var(--radius-xl);
   background: var(--card-color, #f0f0f0);
-  /* Claymorphism: outer drop-shadow + inner top highlight + inner bottom depth */
   box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255, 255, 255, 0.65), inset 0 -2px 0 rgba(0, 0, 0, 0.04);
   border: 3px solid rgba(255, 255, 255, 0.7);
   overflow: hidden;
@@ -198,90 +284,30 @@
   transition: transform var(--transition-normal), box-shadow var(--transition-normal);
 }
 
-.cat-grid > *:nth-child(1) {
-  animation-delay: 0.05s;
-}
+/* Staggered entrance delays */
+.cat-grid > *:nth-child(1)  { animation-delay: 0.05s; }
+.cat-grid > *:nth-child(2)  { animation-delay: 0.10s; }
+.cat-grid > *:nth-child(3)  { animation-delay: 0.15s; }
+.cat-grid > *:nth-child(4)  { animation-delay: 0.20s; }
+.cat-grid > *:nth-child(5)  { animation-delay: 0.25s; }
+.cat-grid > *:nth-child(6)  { animation-delay: 0.30s; }
+.cat-grid > *:nth-child(7)  { animation-delay: 0.35s; }
+.cat-grid > *:nth-child(8)  { animation-delay: 0.40s; }
+.cat-grid > *:nth-child(9)  { animation-delay: 0.45s; }
+.cat-grid > *:nth-child(10) { animation-delay: 0.50s; }
+.cat-grid > *:nth-child(11) { animation-delay: 0.55s; }
+.cat-grid > *:nth-child(12) { animation-delay: 0.60s; }
+.cat-grid > *:nth-child(13) { animation-delay: 0.65s; }
+.cat-grid > *:nth-child(14) { animation-delay: 0.70s; }
+.cat-grid > *:nth-child(15) { animation-delay: 0.75s; }
+.cat-grid > *:nth-child(16) { animation-delay: 0.80s; }
+.cat-grid > *:nth-child(17) { animation-delay: 0.85s; }
+.cat-grid > *:nth-child(18) { animation-delay: 0.90s; }
+.cat-grid > *:nth-child(19) { animation-delay: 0.95s; }
+.cat-grid > *:nth-child(20) { animation-delay: 1.00s; }
+.cat-grid > *:nth-child(21) { animation-delay: 1.05s; }
 
-.cat-grid > *:nth-child(2) {
-  animation-delay: 0.10s;
-}
-
-.cat-grid > *:nth-child(3) {
-  animation-delay: 0.15s;
-}
-
-.cat-grid > *:nth-child(4) {
-  animation-delay: 0.20s;
-}
-
-.cat-grid > *:nth-child(5) {
-  animation-delay: 0.25s;
-}
-
-.cat-grid > *:nth-child(6) {
-  animation-delay: 0.30s;
-}
-
-.cat-grid > *:nth-child(7) {
-  animation-delay: 0.35s;
-}
-
-.cat-grid > *:nth-child(8) {
-  animation-delay: 0.40s;
-}
-
-.cat-grid > *:nth-child(9) {
-  animation-delay: 0.45s;
-}
-
-.cat-grid > *:nth-child(10) {
-  animation-delay: 0.50s;
-}
-
-.cat-grid > *:nth-child(11) {
-  animation-delay: 0.55s;
-}
-
-.cat-grid > *:nth-child(12) {
-  animation-delay: 0.60s;
-}
-
-.cat-grid > *:nth-child(13) {
-  animation-delay: 0.65s;
-}
-
-.cat-grid > *:nth-child(14) {
-  animation-delay: 0.70s;
-}
-
-.cat-grid > *:nth-child(15) {
-  animation-delay: 0.75s;
-}
-
-.cat-grid > *:nth-child(16) {
-  animation-delay: 0.80s;
-}
-
-.cat-grid > *:nth-child(17) {
-  animation-delay: 0.85s;
-}
-
-.cat-grid > *:nth-child(18) {
-  animation-delay: 0.90s;
-}
-
-.cat-grid > *:nth-child(19) {
-  animation-delay: 0.95s;
-}
-
-.cat-grid > *:nth-child(20) {
-  animation-delay: 1.00s;
-}
-
-.cat-grid > *:nth-child(21) {
-  animation-delay: 1.05s;
-}
-
+/* Upper-left light catch on every card regardless of card-color */
 .cat-card::before {
   content: '';
   position: absolute;
@@ -295,6 +321,7 @@
   box-shadow: var(--shadow-lg);
 }
 
+/* Completion checkmark badge */
 .cat-card.is-completed::after {
   content: '✓';
   position: absolute;
@@ -313,7 +340,7 @@
 
 .cat-icon {
   position: relative;
-  font-size: 48px;
+  font-size: 52px;
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.1));
 }
 
@@ -323,6 +350,7 @@
   font-weight: 900;
   color: var(--color-text);
   text-align: center;
+  line-height: 1.15;
 }
 
 .cat-pinyin,
@@ -337,24 +365,43 @@
 .cat-word-count {
   position: relative;
   margin-top: 2px;
-  /* A11y: 0.7rem (~11px) at opacity 0.65 fails WCAG contrast. Fixed. */
   font-size: 0.75rem;
-  font-weight: 600;
-  opacity: 0.85;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  opacity: 0.9;
 }
 
+/* Mini progress indicator inside each card */
+.cat-progress {
+  position: relative;
+  width: calc(100% - var(--space-sm));
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.cat-progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  opacity: 0.55;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ─── Category card action buttons ─── */
 .mode-actions {
   position: relative;
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
   margin-top: var(--space-xs);
   width: 100%;
 }
 
 .mode-action {
   flex: 1;
-  /* WCAG 2.5.5: min 44px touch target (was 38px — non-compliant) */
-  min-height: 44px;
+  min-height: 52px;
   border-radius: var(--radius-full);
   background: white;
   color: var(--color-text);
@@ -363,13 +410,15 @@
   font-size: var(--font-size-sm);
   font-weight: 900;
   cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
 }
 
 .mode-action-primary {
   flex: 1.4;
-  background: var(--color-text);
-  color: var(--color-surface);
+  background: var(--color-primary);
+  color: white;
   border-color: transparent;
+  box-shadow: 0 4px 16px rgba(108, 59, 245, 0.28);
 }
 
 .mode-action-secondary {
@@ -378,25 +427,28 @@
 }
 
 .mode-action:hover {
-  transform: scale(1.02);
-  border-color: rgba(108, 59, 245, 0.48);
+  transform: scale(1.03);
+  border-color: rgba(108, 59, 245, 0.45);
 }
 
+.mode-action-primary:hover {
+  box-shadow: 0 6px 20px rgba(108, 59, 245, 0.38);
+  border-color: transparent;
+}
+
+/* ─── Sparkling reward animation ─── */
 .stars-display.is-sparkling,
 .quiz-stars.is-sparkling {
   animation: starSparkle 0.48s ease;
 }
 
+/* ─── Mascot bob ─── */
 @keyframes pandaBob {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
+/* ─── Responsive: narrow phones ─── */
 @media (max-width: 380px) {
   .cat-grid,
   .lang-grid {
