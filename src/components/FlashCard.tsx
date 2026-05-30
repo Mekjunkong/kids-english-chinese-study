@@ -253,6 +253,9 @@ export default function FlashCard({ mode, category, onStartQuiz, onCompleteDeck,
               {cnWord ? phonetics : 'กด 🔊 เพื่อฟังการออกเสียง'}
             </p>
             {cnWord?.english && <p className="fc-meaning-sub">{cnWord.english}</p>}
+            {cnWord?.example && (
+              <p className="fc-example-sentence" lang="zh">{cnWord.example}</p>
+            )}
           </div>
         </div>
       </div>

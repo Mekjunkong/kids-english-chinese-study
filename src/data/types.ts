@@ -10,6 +10,7 @@ export interface ChineseWord {
   pinyin: string
   thai: string
   english?: string
+  example?: string
 }
 
 export interface Category {

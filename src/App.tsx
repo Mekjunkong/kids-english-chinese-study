@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { CN_CATEGORIES } from './data/chinese'
+import { HSK1_CATEGORIES } from './data/hsk1-complete'
 import { EN_CATEGORIES } from './data/english'
 import type { Category, ChineseCategory, CompleteKind, Feedback, Mode, Screen } from './data/types'
 import { useProgress } from './hooks/useProgress'
@@ -189,7 +190,7 @@ export default function App() {
     content = (
       <HomeScreen
         mode="chinese"
-        categories={CN_CATEGORIES}
+        categories={[...CN_CATEGORIES, ...HSK1_CATEGORIES]}
         onStartFlashcard={(category) => startCNFlashcard(category as ChineseCategory)}
         onStartQuiz={(category) => startCNQuiz(category as ChineseCategory)}
         onLangPick={goLangPick}

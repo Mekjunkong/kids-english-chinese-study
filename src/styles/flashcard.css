@@ -124,6 +124,18 @@
   color: rgba(255, 255, 255, 0.84);
 }
 
+.fc-example-sentence {
+  margin-top: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.5;
+}
+
 .fc-tap-hint {
   color: var(--color-text-light);
   border-radius: var(--radius-full);
