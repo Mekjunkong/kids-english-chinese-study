@@ -106,20 +106,6 @@ function getEnglishPhonetic(text: string) {
   return ENGLISH_PHONETICS[key] ?? text.toLowerCase()
 }
 
-function getPracticeSentence(word: Word | ChineseWord) {
-  if (isChineseWord(word)) {
-    return {
-      primary: `我会说 ${word.chinese}`,
-      helper: `I can say ${word.english ?? word.thai}.`,
-    }
-  }
-
-  return {
-    primary: `I see ${/^[aeiou]/i.test(word.english) ? 'an' : 'a'} ${word.english.toLowerCase()}.`,
-    helper: `ฉันเห็น${word.thai}`,
-  }
-}
-
 const VOICE_UNSUPPORTED_MESSAGE =
   'เสียงอาจไม่ทำงานใน Messenger/LINE browser นี้ กรุณาเปิดลิงก์ใน Chrome หรือ Safari แล้วกด 🔊 อีกครั้ง / Voice may not work inside this in-app browser. Please open in Chrome or Safari.'
 
@@ -189,7 +175,6 @@ export default function FlashCard({ mode, category, onStartQuiz, onCompleteDeck,
 
   const progress = ((index + 1) / words.length) * 100
   const phonetics = cnWord ? cnWord.pinyin : getEnglishPhonetic((word as Word).english)
-  const practiceSentence = getPracticeSentence(word)
 
   function goPrev() {
     if (index > 0) {
@@ -248,10 +233,6 @@ export default function FlashCard({ mode, category, onStartQuiz, onCompleteDeck,
               <p className="fc-word">{word.english}</p>
             )}
             <p className="fc-tap-hint">👆 แตะเพื่อดูความหมาย / Tap to reveal</p>
-            <div className="fc-example" aria-label="Practice sentence">
-              <span>{practiceSentence.primary}</span>
-              <small>{practiceSentence.helper}</small>
-            </div>
           </div>
 
           <div className="flip-card-back">
@@ -266,16 +247,11 @@ export default function FlashCard({ mode, category, onStartQuiz, onCompleteDeck,
             >
               🔊
             </button>
-            <span className="fc-back-emoji">{word.emoji}</span>
             {isCN && cnWord && <StrokeCard character={cnWord.chinese} autoAnimate={flipped} />}
             <p className="fc-meaning">{word.thai}</p>
             <p className="fc-phonetic">
               {cnWord ? phonetics : 'กด 🔊 เพื่อฟังการออกเสียง'}
             </p>
-            <div className="fc-example fc-example-back" aria-label="Practice sentence reminder">
-              <span>{practiceSentence.primary}</span>
-              <small>{practiceSentence.helper}</small>
-            </div>
             {cnWord?.english && <p className="fc-meaning-sub">{cnWord.english}</p>}
           </div>
         </div>

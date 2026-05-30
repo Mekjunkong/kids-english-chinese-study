@@ -145,7 +145,7 @@
   display: grid;
   place-items: center;
   border-radius: var(--radius-lg);
-  background: white;
+  background: #F0EDFF;
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
 }
