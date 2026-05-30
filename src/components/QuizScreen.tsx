@@ -98,10 +98,6 @@ export default function QuizScreen({
           🔊
         </button>
 
-        <span className="q-emoji-large" aria-hidden="true">
-          {word.emoji}
-        </span>
-
         {isCN && cnWord ? (
           <>
             <p className="q-word-primary" lang="zh">

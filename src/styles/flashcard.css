@@ -140,8 +140,8 @@
 }
 
 .stroke-container {
-  width: 132px;
-  height: 132px;
+  width: 200px;
+  height: 200px;
   display: grid;
   place-items: center;
   border-radius: var(--radius-lg);

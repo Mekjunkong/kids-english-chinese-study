@@ -19,9 +19,9 @@ export default function StrokeCard({ character, autoAnimate = true }: Props) {
 
     try {
       writerRef.current = HanziWriter.create(containerRef.current, char, {
-        width: 130,
-        height: 130,
-        padding: 12,
+        width: 200,
+        height: 200,
+        padding: 16,
         showOutline: true,
         strokeColor: '#6C3BF5',
         outlineColor: '#D0C8FF',

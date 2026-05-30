@@ -43,15 +43,15 @@ function say(text: string, lang: string, rate: number, pitch: number): SpeechRes
 }
 
 export function sayEN(text: string): SpeechResult {
-  return say(text, 'en-US', 0.78, 1.15)
+  return say(text, 'en-US', 0.65, 1.15)
 }
 
 export function sayCN(text: string): SpeechResult {
-  return say(text, 'zh-CN', 0.82, 1.1)
+  return say(text, 'zh-CN', 0.65, 1.1)
 }
 
 export function sayTH(text: string): SpeechResult {
-  return say(text, 'th-TH', 0.82, 1.08)
+  return say(text, 'th-TH', 0.65, 1.08)
 }
 
 function getAudioContextClass() {
